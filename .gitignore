@@ -1,0 +1,10 @@
+# Ignore data folders
+data/
+data-final/
+
+# Ignore all outputs folders
+outputs-*/
+outputs_*/
+
+# Ignore inference pipeline directory
+inference_pipeline/

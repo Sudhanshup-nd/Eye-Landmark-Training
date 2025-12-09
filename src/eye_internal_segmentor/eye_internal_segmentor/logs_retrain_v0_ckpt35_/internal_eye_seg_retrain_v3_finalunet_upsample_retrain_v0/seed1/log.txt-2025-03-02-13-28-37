@@ -1,0 +1,1012 @@
+---------------------------------------------------------------------
+CONFIGURATION
+accum_iter: 256
+blink_loss_scale: 4000
+blinkpath: /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_o
+datapath: /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/data/SEED1
+devicename: cuda:3
+do_eye_close: False
+imagepath: /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/inputs
+is_test: False
+labelpath: /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_jointmap
+labelpath2: /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_jointmap2
+logdir: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1
+modelstr: unet_upsample_retrain_v0
+num_epochs: 50
+optim_LR: 0.0002
+remarks: 
+      31 JUL 2024
+      Segmentation Masks for pupil + iris + sclera
+      ++ No eye close
+      ++ LeakyRelu used
+      ++ Single input channel for image
+      ++ Input shape is 64x64 (tight fit)
+      ++ Internal lab data
+      Additional geometrics augmentations on data and segmentation mask, (see dataloader prints)
+      
+seed: 1
+setDataParallel: False
+setSingleChannelInput: True
+test_sample_path: []
+val_sample_path: []
+---------------------------------------------------------------------
+DEVICE= cuda:3
+---unet segmentor with upsample layers---
+NUM PARAMS = 66761
+
+imagepath:  /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/inputs labelpath:  /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_jointmap labelpath2:  /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_jointmap2 blinkpath:  /home/ubuntu/inwdata1/dyotanad/old_internalLab_CVAT_data_processed_v3_final/deeplabv3_ckpt35_with_blinkModel/dms_prod_tight_64x64/labels_o
+---
+--Sclera,Iris,Pupil Segmentation DATASET + Blink Detect--
+Num samples= 820142
+data transform: Compose(
+    RandomAdjustSharpness(sharpness_factor=0.2,p=0.25)
+    Resize(size=(64, 64), interpolation=bilinear, max_size=None, antialias=True)
+    ColorJitter(brightness=(0.5, 1.5), contrast=(0.7, 1.3), saturation=(0.7, 1.3), hue=(-0.1, 0.1))
+    RandomRotation(degrees=[-10.0, 10.0], interpolation=bilinear, expand=False, fill=0)
+    ToTensor()
+) Normalize(mean=[0.485], std=[0.229])
+label transform: Resize(size=(64, 64), interpolation=nearest, max_size=None, antialias=True)
+-----------
+---
+--Sclera,Iris,Pupil Segmentation DATASET + Blink Detect--
+Num samples= 266884
+data transform: Compose(
+    Resize(size=(64, 64), interpolation=bilinear, max_size=None, antialias=True)
+    ToTensor()
+) Normalize(mean=[0.485], std=[0.229])
+label transform: Resize(size=(64, 64), interpolation=nearest, max_size=None, antialias=True)
+-----------
+Training...
+TRAIN, EPOCH=1, Train total loss=790.538114, Train segment loss=790.538114, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt1.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt1.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=1, VAL total loss=603.149712, VAL segment loss=603.149712, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.89 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=2, Train total loss=430.383005, Train segment loss=430.383005, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.00 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt2.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt2.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=2, VAL total loss=548.775896, VAL segment loss=548.775896, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.86 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=3, Train total loss=399.408076, Train segment loss=399.408076, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt3.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt3.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=3, VAL total loss=526.850295, VAL segment loss=526.850295, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.83 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=4, Train total loss=384.420856, Train segment loss=384.420856, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.01 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt4.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt4.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=4, VAL total loss=509.259682, VAL segment loss=509.259682, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=5, Train total loss=375.258240, Train segment loss=375.258240, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt5.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt5.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=5, VAL total loss=507.217174, VAL segment loss=507.217174, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.85 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=6, Train total loss=369.180633, Train segment loss=369.180633, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt6.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt6.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=6, VAL total loss=511.027917, VAL segment loss=511.027917, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=7, Train total loss=364.653299, Train segment loss=364.653299, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt7.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt7.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=7, VAL total loss=489.390655, VAL segment loss=489.390655, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=8, Train total loss=361.296263, Train segment loss=361.296263, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt8.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt8.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=8, VAL total loss=493.069741, VAL segment loss=493.069741, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=9, Train total loss=358.246098, Train segment loss=358.246098, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt9.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt9.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=9, VAL total loss=487.144430, VAL segment loss=487.144430, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=10, Train total loss=355.927682, Train segment loss=355.927682, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt10.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt10.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=10, VAL total loss=488.654569, VAL segment loss=488.654569, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.78 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=11, Train total loss=354.205467, Train segment loss=354.205467, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt11.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt11.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=11, VAL total loss=481.673940, VAL segment loss=481.673940, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.76 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=12, Train total loss=352.469498, Train segment loss=352.469498, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt12.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt12.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=12, VAL total loss=482.163342, VAL segment loss=482.163342, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.77 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=13, Train total loss=350.877589, Train segment loss=350.877589, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt13.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt13.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=13, VAL total loss=481.817724, VAL segment loss=481.817724, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=14, Train total loss=349.664828, Train segment loss=349.664828, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt14.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt14.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=14, VAL total loss=479.477486, VAL segment loss=479.477486, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=15, Train total loss=348.635245, Train segment loss=348.635245, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt15.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt15.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=15, VAL total loss=481.437270, VAL segment loss=481.437270, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=5.71 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=16, Train total loss=347.482525, Train segment loss=347.482525, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt16.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt16.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=16, VAL total loss=486.236332, VAL segment loss=486.236332, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.78 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=17, Train total loss=346.323487, Train segment loss=346.323487, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt17.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt17.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=17, VAL total loss=479.091731, VAL segment loss=479.091731, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=18, Train total loss=345.605372, Train segment loss=345.605372, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt18.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt18.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=18, VAL total loss=475.559999, VAL segment loss=475.559999, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=19, Train total loss=344.735137, Train segment loss=344.735137, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.04 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt19.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt19.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=19, VAL total loss=476.001909, VAL segment loss=476.001909, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=20, Train total loss=343.969284, Train segment loss=343.969284, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt20.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt20.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=20, VAL total loss=486.049242, VAL segment loss=486.049242, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=5.71 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=21, Train total loss=343.052545, Train segment loss=343.052545, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt21.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt21.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=21, VAL total loss=472.887210, VAL segment loss=472.887210, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.86 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=22, Train total loss=342.461153, Train segment loss=342.461153, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt22.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt22.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=22, VAL total loss=479.557712, VAL segment loss=479.557712, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.84 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=23, Train total loss=341.773738, Train segment loss=341.773738, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt23.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt23.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=23, VAL total loss=479.055738, VAL segment loss=479.055738, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.82 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=24, Train total loss=341.526834, Train segment loss=341.526834, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt24.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt24.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=24, VAL total loss=475.667675, VAL segment loss=475.667675, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=25, Train total loss=340.769399, Train segment loss=340.769399, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt25.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt25.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=25, VAL total loss=480.288239, VAL segment loss=480.288239, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=26, Train total loss=340.260297, Train segment loss=340.260297, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt26.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt26.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=26, VAL total loss=478.886778, VAL segment loss=478.886778, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=27, Train total loss=339.757179, Train segment loss=339.757179, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt27.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt27.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=27, VAL total loss=483.653215, VAL segment loss=483.653215, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.83 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=28, Train total loss=339.049644, Train segment loss=339.049644, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt28.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt28.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=28, VAL total loss=473.890506, VAL segment loss=473.890506, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=29, Train total loss=338.888083, Train segment loss=338.888083, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt29.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt29.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=29, VAL total loss=475.728201, VAL segment loss=475.728201, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.76 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=30, Train total loss=338.231928, Train segment loss=338.231928, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt30.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt30.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=30, VAL total loss=475.481459, VAL segment loss=475.481459, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.82 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=31, Train total loss=337.979518, Train segment loss=337.979518, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt31.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt31.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=31, VAL total loss=474.495762, VAL segment loss=474.495762, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=32, Train total loss=337.341833, Train segment loss=337.341833, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt32.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt32.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=32, VAL total loss=479.567701, VAL segment loss=479.567701, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.78 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=33, Train total loss=337.087682, Train segment loss=337.087682, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt33.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt33.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=33, VAL total loss=470.597544, VAL segment loss=470.597544, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=34, Train total loss=336.704679, Train segment loss=336.704679, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt34.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt34.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=34, VAL total loss=483.982774, VAL segment loss=483.982774, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=35, Train total loss=336.266799, Train segment loss=336.266799, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.01 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt35.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt35.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=35, VAL total loss=469.025629, VAL segment loss=469.025629, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=36, Train total loss=336.140327, Train segment loss=336.140327, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.01 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt36.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt36.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=36, VAL total loss=468.770154, VAL segment loss=468.770154, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.76 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=37, Train total loss=335.697451, Train segment loss=335.697451, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.01 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt37.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt37.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=37, VAL total loss=478.160899, VAL segment loss=478.160899, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.76 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=38, Train total loss=335.340007, Train segment loss=335.340007, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.02 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt38.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt38.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=38, VAL total loss=466.988768, VAL segment loss=466.988768, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=39, Train total loss=335.138111, Train segment loss=335.138111, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.01 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt39.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt39.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=39, VAL total loss=462.255638, VAL segment loss=462.255638, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.77 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=40, Train total loss=334.775161, Train segment loss=334.775161, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt40.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt40.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=40, VAL total loss=472.065251, VAL segment loss=472.065251, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.74 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=41, Train total loss=334.355427, Train segment loss=334.355427, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt41.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt41.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=41, VAL total loss=465.840726, VAL segment loss=465.840726, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=42, Train total loss=334.321746, Train segment loss=334.321746, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt42.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt42.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=42, VAL total loss=470.174205, VAL segment loss=470.174205, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.80 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=43, Train total loss=333.826175, Train segment loss=333.826175, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt43.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt43.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=43, VAL total loss=466.838083, VAL segment loss=466.838083, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.78 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=44, Train total loss=333.570950, Train segment loss=333.570950, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt44.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt44.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=44, VAL total loss=468.105782, VAL segment loss=468.105782, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=45, Train total loss=333.479380, Train segment loss=333.479380, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt45.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt45.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=45, VAL total loss=471.980337, VAL segment loss=471.980337, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=46, Train total loss=333.279321, Train segment loss=333.279321, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.04 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt46.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt46.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=46, VAL total loss=473.589567, VAL segment loss=473.589567, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=47, Train total loss=332.979528, Train segment loss=332.979528, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt47.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt47.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=47, VAL total loss=472.630979, VAL segment loss=472.630979, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.81 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=48, Train total loss=332.749444, Train segment loss=332.749444, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt48.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt48.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=48, VAL total loss=462.160608, VAL segment loss=462.160608, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.82 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=49, Train total loss=332.524463, Train segment loss=332.524463, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt49.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt49.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=49, VAL total loss=474.245577, VAL segment loss=474.245577, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.79 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+TRAIN, EPOCH=50, Train total loss=332.242872, Train segment loss=332.242872, Train eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+Time elapsed=6.03 mins
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eye_segment_internal_chkpt50.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eye_segment_internal_chkpt50.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-
+VAL, EPOCH=50, VAL total loss=471.308215, VAL segment loss=471.308215, VAL eye_close loss=0.000000
+(Eye Close) Precision=0.00, Recall=0.00
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-sclera) Average Precision (0.80:0.95)=0.75
+(Segmentation-iris) Average Precision (0.80:0.95)=1.00
+(Segmentation-pupil) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=0.94
+Time elapsed=4.75 mins
+(Segmentation-background) Average Precision (0.80:0.95)=1.00
+(Segmentation-eye_region) Average Precision (0.80:0.95)=1.00
+(Segmentation) Mean Average Precision (0.80:0.95)=1.00
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+Saving model+cfg at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_eyesegment_final.pt
+Saving model state dict  at: /home/ubuntu/inwdata/dyotanad/eye_segmentation/code/eye_internal_segmentor/eye_internal_segmentor/logs_retrain_v0_ckpt35_/internal_eye_seg_retrain_v3_finalunet_upsample_retrain_v0/seed1/model_state_dict_eyesegment_final.pt
+-*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*-

@@ -1,0 +1,55 @@
+seed: 42
+
+data:
+  num_landmarks: 6
+  normalize_landmarks: True
+  landmarks_local_coords: True
+  infer_visibility_from_landmarks: False
+  keep_landmarks_if_invisible: False        # now: if visibility=0 but landmarks exist, we STILL keep them
+  image_size: 128
+  mean: [0.485, 0.456, 0.406]
+  std:  [0.229, 0.224, 0.225]
+  # augment section retained for future (currently geometric ops disabled)
+  augment:
+    # geometric disabled intentionally; set probabilities >0 when you implement landmark-aware transforms
+    random_horizontal_flip: 0.3
+    random_vertical_flip: 0.3
+    random_rotation_deg: 0.3
+    occlusion_p: 0.1
+    blur_p: 0.1
+
+paths:
+  train_csv: /inwdata2a/sudhanshu/landmarks_only_training/data-final/train.csv
+  #val_csv: /inwdata2a/sudhanshu/landmarks_only_training/data/val-v2.clean.csv
+  val_csv: /inwdata2a/sudhanshu/landmarks_only_training/data-final/val.csv
+  output_dir: /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet-without-backbone-freeze
+
+training:
+  batch_size: 32
+  epochs: 100
+  num_workers: 4
+  lr: 0.0005
+  weight_decay: 0.01
+  early_stop_patience: 10
+  landmark_loss_type: l1      # choices: l1, mse, smooth_l1, huber, wing
+  landmark_loss:
+    huber_delta: 1.0
+    wing_w: 10.0
+    wing_epsilon: 2.0
+
+model:
+  backbone: resnet18   
+  pretrain_encoder_ckpt: /inwdata2a/sudhanshu/landmarks_only_training/outputs_landmarks_unet/dyotana-model.pt
+  hidden_landmarks: 128
+  dropout: 0.3
+
+inference:
+  pck_threshold: 0.1
+
+checkpoint:
+  save_best_metric: val_lmk_l1
+
+debug:
+  enabled: False
+  dataset_samples: 0
+  verbose_transforms: False
