@@ -27,16 +27,16 @@ Columns: frame_key, EAR_left, EAR_right
 
 Usage:
 python -m landmarks_only_training.src.evaluate-pred-unet-with-video \
-  --checkpoint /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet-without-backbone-freeze/best_unet_landmarks.pt \
+  --checkpoint /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet_encoder_freezed-2/best_unet_landmarks.pt \
   --config /inwdata2a/sudhanshu/landmarks_only_training/configs/default.yaml \
-  --csv /inwdata2a/sudhanshu/landmarks_only_training/inference_pipeline/inference_pairs-sorted.csv \
-  --output_dir /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet-without-backbone-freeze \
+  --csv /inwdata2a/sudhanshu/landmarks_only_training/data-final/val.csv \
+  --output_dir /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet_encoder_freezed-2/eval \
   --limit 1500 \
-  --visualize \
-  --video_fps 1 \
-  --video_xaxis_frames 100 \
-  --ear_graph_mode left \
-  --no_augment
+ # --visualize \
+  #--video_fps 1 \
+  #--video_xaxis_frames 100 \
+  #--ear_graph_mode left \
+#  --no_augment
 
 Outputs:
 - Images:
@@ -72,8 +72,8 @@ try:
 except ImportError:
     tqdm = lambda x, **kwargs: x
 
-from .new_unet_model import EyeLandmarkUNetModel
-from .model import EyeLandmarkModel
+from  landmarks_only_training.models.unet_encoder_model import EyeLandmarkUNetModel
+from  landmarks_only_training.models.resnet_encoder_model import EyeLandmarkModel
 
 import cv2
 import torchvision.transforms as T
@@ -579,20 +579,22 @@ def main():
 
     ckpt = load_checkpoint(args.checkpoint, map_location=device)
 
-    # model = EyeLandmarkUNetModel(
-    #     hidden_landmarks=cfg['model']['hidden_landmarks'],
-    #     dropout=cfg['model']['dropout'],
-    #     num_landmarks=cfg['data']['num_landmarks']
-    # )
+    if cfg["inference"]["backbone"] == "dms-unet-encoder-backbone" :
+        model = EyeLandmarkUNetModel(
+            hidden_landmarks=cfg['model']['hidden_landmarks'],
+            dropout=cfg['model']['dropout'],
+            num_landmarks=cfg['data']['num_landmarks']
+        ).to(device)
+    
+    elif cfg["inference"]["backbone"] == "resnet18":
+        model = EyeLandmarkModel(
+            backbone_name=cfg['model']['backbone'],
+            pretrained=False,
+            hidden_landmarks=cfg['model']['hidden_landmarks'],
+            dropout=cfg['model']['dropout'],
+            num_landmarks=cfg['data']['num_landmarks']
+        ).to(device)
 
-
-    model = EyeLandmarkModel(
-        backbone_name=cfg['model']['backbone'],
-        pretrained=False,
-        hidden_landmarks=cfg['model']['hidden_landmarks'],
-        dropout=cfg['model']['dropout'],
-        num_landmarks=cfg['data']['num_landmarks']
-    ).to(device)
 
     # checkpoints saved via save_checkpoint have key 'model_state'
     state_key = 'model_state' if 'model_state' in ckpt else 'model'

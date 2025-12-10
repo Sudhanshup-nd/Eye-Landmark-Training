@@ -103,7 +103,8 @@ def _ensure_src_on_path():
     if here not in sys.path:
         sys.path.insert(0, here)
 
-def load_unet_encoder_backbone_from_ckpt(ckpt_path, device="cpu"):
+
+def load_unet_encoder_backbone_from_ckpt(ckpt_path, cfg=None, device="cpu"):
     """
     Load a checkpoint saved via MLflow/wrapper that contains yacs CfgNode in ckpt['cfg'] and a model saved
     from eye_internal_segmentor.*. We:
@@ -157,10 +158,7 @@ def load_unet_encoder_backbone_from_ckpt(ckpt_path, device="cpu"):
     backbone_sd = {k: v for k, v in model_state.items() if any(k.startswith(part) for part in encoder_parts)}
 
     # Build backbone and load subset
-    try:
-        from model.unet_wrapper import UNetBackbone
-    except Exception:
-        from .unet_wrapper import UNetBackbone
+    from landmarks_only_training.models.backbones.unet_wrapper import UNetBackbone
 
     backbone = UNetBackbone()
     missing, unexpected = backbone.load_state_dict(backbone_sd, strict=False)
@@ -169,5 +167,102 @@ def load_unet_encoder_backbone_from_ckpt(ckpt_path, device="cpu"):
     if unexpected:
         print(f"[INFO] Unexpected keys ignored in backbone load: {unexpected}")
 
-  #  backbone.freeze_backbone()
+    print("[INFO] Freezing UNet encoder backbone weights.")
+    backbone.freeze_backbone()
     return backbone
+
+
+
+import torch
+from landmarks_only_training.models.backbones.multiscale_unet_backbone import MultiScaleUNetBackbone
+import os
+import sys
+import torch
+
+def _ensure_src_on_path():
+    """
+    Make top-level project folders importable for trusted torch.load(weights_only=False) fallback.
+    """
+    project_root = "/inwdata2a/sudhanshu"
+    if project_root not in sys.path:
+        sys.path.append(project_root)
+
+def load_multiscale_unet_encoder_from_ckpt(ckpt_path, device="cpu", freeze=True):
+    """
+    Load a checkpoint that contains UNet weights, extract encoder+bottleneck parts,
+    and load them into MultiScaleUNetBackbone.
+
+    Safe-first: try weights_only=True, allowlist yacs.config.CfgNode.
+    Fallback: trusted weights_only=False after ensuring project root is importable.
+
+    Returns:
+        backbone (MultiScaleUNetBackbone) on the given device, optionally frozen.
+    """
+    # 1) Allowlist yacs.config.CfgNode for safe weights_only=True
+    try:
+        import yacs.config
+        torch.serialization.add_safe_globals([yacs.config.CfgNode])
+    except Exception:
+        pass
+
+    # 2) Load checkpoint safely first
+    ckpt = None
+    try:
+        ckpt = torch.load(ckpt_path, map_location=device, weights_only=True)
+    except Exception as e_safe:
+        print(f"[WARN] weights_only=True load failed: {e_safe}")
+        print("[INFO] Attempting trusted load with weights_only=False after making project importable...")
+        _ensure_src_on_path()
+        ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+
+    # 3) Normalize to a state_dict
+    state = None
+    if isinstance(ckpt, dict):
+        if "model" in ckpt:
+            model_obj = ckpt["model"]
+            if hasattr(model_obj, "state_dict"):
+                state = model_obj.state_dict()
+                print("[INFO] Extracted state_dict from ckpt['model'] object.")
+    if state is None:
+        if hasattr(ckpt, "state_dict"):
+            print("[INFO] Extracted state_dict from ckpt.state_dict()")
+            state = ckpt.state_dict()
+        elif isinstance(ckpt, dict) and all(isinstance(v, torch.Tensor) for v in ckpt.values()):
+            print("[INFO] Using ckpt as state_dict directly.")
+            state = ckpt
+    if state is None:
+        raise RuntimeError("Could not resolve state_dict from checkpoint; please inspect checkpoint format.")
+
+    # 4) Filter encoder+bottleneck keys: enc64/enc32/enc16/enc8/conv
+    enc_prefixes = ["enc64", "enc32", "enc16", "enc8", "conv"]
+
+    def is_enc_key(k):
+        # Accept either exact startswith or prefixed module names (e.g., "module.encoder.enc64.conv1.weight")
+        return any(k.startswith(p) or f".{p}." in k for p in enc_prefixes)
+
+    filtered = {k.split("module.")[-1]: v for k, v in state.items() if is_enc_key(k)}
+
+    # Optional: strip leading submodule prefixes if present (e.g., "encoder.")
+    def strip_prefix(k):
+        for p in ["encoder.", "backbone.", "model."]:
+            if k.startswith(p):
+                return k[len(p):]
+        return k
+    filtered = {strip_prefix(k): v for k, v in filtered.items()}
+
+    # 5) Build multiscale backbone and load
+  
+  
+    backbone = MultiScaleUNetBackbone().to(device)
+    missing, unexpected = backbone.load_state_dict(filtered, strict=False)
+
+    if missing:
+        print(f"[INFO] Missing keys in backbone load (expected for non-encoder layers): {missing}")
+    if unexpected:
+        print(f"[INFO] Unexpected keys ignored in backbone load: {unexpected}")
+
+    print("[INFO] Freezing UNet encoder backbone weights.")
+    backbone.freeze_backbone()
+    return backbone
+
+ 

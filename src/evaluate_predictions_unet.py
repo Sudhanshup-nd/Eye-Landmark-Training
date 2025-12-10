@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 """
-Landmark-only evaluation for the UNet-based landmark model.
-
-Matches the pipeline used in evaluate_predictions.py, but loads
-EyeLandmarkUNetModel and converts RGB tensors to grayscale before forward.
+This 
 
 Usage:
   python -m landmarks_only_training.src.evaluate_predictions_unet \
-    --checkpoint /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet-without-backbone-freeze/best_unet_landmarks.pt \
+    --checkpoint /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet_encoder_freezed/best_unet_landmarks.pt \
     --config landmarks_only_training/configs/default.yaml \
-    --csv /inwdata2a/sudhanshu/landmarks_only_training/data-final/test.csv \
-    --output_dir /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet-without-backbone-freeze \
-    --limit 20000 \
-    --pck_thresholds 0.05,0.1 \
+    --limit 20 \
     --visible_only \
-  #  --visualize \
-  #  --show_gt
+    --visualize \
+    --show_gt
 """
 
 import argparse
@@ -27,7 +21,10 @@ import pandas as pd
 import torch
 from PIL import Image
 import matplotlib.pyplot as plt
-from .model import EyeLandmarkModel
+from  landmarks_only_training.models.unet_encoder_model import EyeLandmarkUNetModel
+from landmarks_only_training.models.backbones.unet_wrapper import UNetBackbone
+from  landmarks_only_training.models.resnet_encoder_model import EyeLandmarkModel
+from .utils import load_unet_encoder_backbone_from_ckpt
 
 try:
     from tqdm import tqdm
@@ -46,7 +43,7 @@ if __package__ in (None, ""):
 from .utils import load_config, load_checkpoint
 from .transforms import build_val_transforms
 
-from .new_unet_model import EyeLandmarkUNetModel
+
 
 # ---------- Helpers ----------
 
@@ -199,8 +196,6 @@ def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("--checkpoint", required=True)
     ap.add_argument("--config", required=True)
-    ap.add_argument("--csv", required=True)
-    ap.add_argument("--output_dir", required=True)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--visible_only", action="store_true")
     ap.add_argument("--visualize", action="store_true")
@@ -208,8 +203,6 @@ def parse_args():
     ap.add_argument("--save_per_point", action="store_true",
                     help="Include per-point L2 and normalized distances in CSV.")
     ap.add_argument("--percentiles", type=str, default="90,95,99")
-    ap.add_argument("--pck_thresholds", type=str, default="0.05,0.1",
-                    help="Comma-separated normalized distance thresholds for PCK.")
     ap.add_argument("--norm_mode", type=str, default="max_side",
                     choices=["max_side", "diagonal", "mean_side"],
                     help="Reference distance mode for NME: max_side | diagonal | mean_side")
@@ -233,40 +226,66 @@ def main():
     cfg = load_config(args.config)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    os.makedirs(args.output_dir, exist_ok=True)
-    overlay_dir = os.path.join(args.output_dir, "overlays")
+    os.makedirs(cfg["paths"]["output_dir"], exist_ok=True)
+    overlay_dir = os.path.join(cfg["paths"]["output_dir"], "overlays")
     if args.visualize:
         os.makedirs(overlay_dir, exist_ok=True)
 
-    report_txt = os.path.join(args.output_dir, "evaluation_landmarks.txt")
-    per_sample_csv = os.path.join(args.output_dir, "per_sample_landmarks.csv")
+    report_txt = os.path.join(cfg["paths"]["output_dir"], "evaluation_landmarks.txt")
+    per_sample_csv = os.path.join(cfg["paths"]["output_dir"], "per_sample_landmarks.csv")
 
     ckpt = load_checkpoint(args.checkpoint, map_location=device)
 
 
-    # model = EyeLandmarkUNetModel(
-    #     hidden_landmarks=cfg['model']['hidden_landmarks'],
-    #     dropout=cfg['model']['dropout'],
-    #     num_landmarks=cfg['data']['num_landmarks']
-    # )
 
-    model = EyeLandmarkModel(
-        backbone_name=cfg['model']['backbone'],
-        pretrained=False,
-        hidden_landmarks=cfg['model']['hidden_landmarks'],
-        dropout=cfg['model']['dropout'],
-        num_landmarks=cfg['data']['num_landmarks']
-    ).to(device)
+    if cfg["model"]["backbone"] == "resnet18":
+        print(f"[INFO] (Eval) Loading ResNet18 backbone.")
+        model = EyeLandmarkModel(
+            hidden_landmarks=int(cfg['model']['hidden_landmarks']),
+            dropout=float(cfg['model']['dropout']),
+            backbone_name="resnet18"
+        ).to(device)
+        # load weights
+        checkpoint = torch.load(args.checkpoint, map_location=device)
+      
+        # else, if checkpoint has 'state_dict' key
+        model.load_state_dict(checkpoint['model_state'])
+
+        # set model to evaluation mode if needed
+        model.eval()
+
+   
 
 
 
-    # checkpoints saved via save_checkpoint have key 'model_state'
-    state_key = 'model_state' if 'model_state' in ckpt else 'model'
-    model.load_state_dict(ckpt[state_key], strict=False)
-    model.to(device)
-    model.eval()
+    elif cfg["model"]["backbone"] == "unet_encoder_unfreezed"   or cfg["model"]["backbone"] == "unet_encoder_freezed":
+        if cfg["model"]["backbone"] == "unet_encoder_freezed":
+            print(f"[INFO] (Eval) Loading pre-trained UNet encoder from: {cfg.get('model', {}).get('pretrain_encoder_ckpt', None)} (Freezed).")
+        elif cfg["model"]["backbone"] == "unet_encoder_unfreezed":
+            print(f"[INFO] (Eval) Loading Unet encoder backbone (unfreezed).")    
+        backbone = UNetBackbone()
+        backbone = backbone.to(device)  # ensure module is on device
+        model = EyeLandmarkUNetModel(
+            hidden_landmarks=int(cfg['model']['hidden_landmarks']),
+            dropout=float(cfg['model']['dropout']),
+            backbone=backbone
+        ).to(device)
 
-    df = pd.read_csv(args.csv)
+        # load weights
+        checkpoint = torch.load(args.checkpoint, map_location=device)
+      
+        # else, if checkpoint has 'state_dict' key
+        model.load_state_dict(checkpoint['model_state'])
+
+        # set model to evaluation mode if needed
+        model.eval()
+
+    else:
+        raise ValueError(f"Unknown backbone: {cfg['model']['backbone']}")    
+
+
+
+    df = pd.read_csv(cfg['paths']['test_csv'])
     if args.limit is not None:
         df = df.head(args.limit)
 
@@ -281,7 +300,7 @@ def main():
     skipped = 0
 
     pct_list = [int(p.strip()) for p in args.percentiles.split(",") if p.strip().isdigit()]
-    pck_thresholds = [float(t.strip()) for t in args.pck_thresholds.split(",") if t.strip()]
+    pck_thresholds =  cfg["inference"]["pck_thresholds"]
 
     for idx, row in enumerate(tqdm(df.itertuples(index=False), total=len(df), desc="Evaluating UNet landmarks")):
         img_path = getattr(row, "path_to_dataset", None)

@@ -10,17 +10,17 @@ Adds:
   - Optional per-point L2 and per-point normalized distances in CSV
 
 Usage:
-  python -m src.evaluate_predictions \
-    --checkpoint outputs_landmarks_L1_loss/best_landmarks.pt \
-    --config configs/default.yaml \
-    --csv /inwdata2a/sudhanshu/landmarks_only_training/inference_pipeline/inference_pairs.csv \
-    --output_dir outputs_landmarks_new/eval \
+  python -m landmarks_only_training.src.evaluate_predictions \
+    --checkpoint /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet_encoder_freezed-2/best_unet_landmarks.pt \
+    --config /inwdata2a/sudhanshu/landmarks_only_training/configs/default.yaml \
+    --csv /inwdata2a/sudhanshu/landmarks_only_training/data-final/val.csv \
+    --output_dir /inwdata2a/sudhanshu/landmarks_only_training/outputs_unet_encoder_freezed-2/eval \
     --limit 20000 \
     --pck_thresholds 0.05,0.1 \
      --visible_only \
-     --visualize \
-     --show_gt
-
+  #   --visualize \
+   #  --show_gt
+    
 NOTE: Updated to match new training code:
       - Crops eye bbox from face image
       - Pads to square if needed
@@ -54,7 +54,7 @@ if __package__ in (None, ""):
 # Internal imports
 from src.utils import load_config, load_checkpoint
 from src.transforms import build_val_transforms
-from src.model import EyeLandmarkModel  # landmark-only
+from landmarks_only_training.models.resnet_encoder_model import EyeLandmarkModel  # landmark-only
 
 # ---------- Helpers ----------
 
@@ -241,6 +241,7 @@ def main():
     per_sample_csv = os.path.join(args.output_dir, "per_sample_landmarks.csv")
 
     ckpt = load_checkpoint(args.checkpoint, map_location=device)
+    
     model = EyeLandmarkModel(
         backbone_name=cfg['model']['backbone'],
         pretrained=False,

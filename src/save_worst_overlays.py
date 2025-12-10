@@ -54,7 +54,7 @@ from torch.utils.data import DataLoader
 from .utils import load_config, seed_everything as set_seed
 from .dataset import EyeDataset
 from .transforms import build_val_transforms
-from .model import EyeLandmarkModel
+from ..models.resnet_encoder_model import EyeLandmarkModel
 
 
 def draw_landmarks(img_rgb: np.ndarray, pts: np.ndarray, color=(0, 0, 255), radius: int = 2) -> np.ndarray:

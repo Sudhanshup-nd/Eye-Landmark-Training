@@ -43,7 +43,7 @@ if __package__ in (None, ""):
 # ------------------------------------------------------------------------------------------
 
 from src.utils import load_config, ensure_dir, load_checkpoint
-from src.model import EyeMultiTaskModel
+from landmarks_only_training.models.resnet_encoder_model import EyeMultiTaskModel
 from src.transforms import build_val_transforms
 
 

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from .utils import load_config, ensure_dir, load_checkpoint
 from .dataset import EyeDataset
 from .transforms import build_val_transforms, resize_with_padding
-from .model import EyeMultiTaskModel
+from ..models.resnet_encoder_model import EyeMultiTaskModel
 
 def parse_args():
     ap = argparse.ArgumentParser()

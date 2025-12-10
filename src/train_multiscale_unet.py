@@ -1,6 +1,6 @@
 
 # in sudhanshu folder run 
-# python -m landmarks_only_training.src.train_unet --config landmarks_only_training/configs/default.yaml
+# python -m landmarks_only_training.src.train_multiscale_unet --config landmarks_only_training/configs/default.yaml
 
 import os
 import argparse
@@ -14,11 +14,10 @@ from .losses import build_landmark_loss
 from .utils import load_config, seed_everything, ensure_dir, save_checkpoint
 from .metrics import landmark_metrics, pck_metric
 from tqdm import tqdm
-from .utils import load_unet_encoder_backbone_from_ckpt
-#from .new_unet_model import EyeLandmarkUNetModel
-from landmarks_only_training.models.unet_encoder_model import EyeLandmarkUNetModel
-from landmarks_only_training.models.backbones.unet_wrapper import UNetBackbone
-from ..models.resnet_encoder_model import EyeLandmarkModel
+from .utils import  load_multiscale_unet_encoder_from_ckpt
+from landmarks_only_training.models.multiscale_unet_model import MultiScaleEyeLandmarkUNetModel
+
+
 
 
 
@@ -64,19 +63,17 @@ def get_config(args):
     return load_config(args.config)
 
 
+
+
 def build_dataloaders(cfg):
     tfm_train = build_train_transforms(cfg)
     tfm_val = build_val_transforms(cfg)
-
     train_ds = EyeDataset(cfg['paths']['train_csv'], cfg, transform=tfm_train, is_train=True)
     val_ds = EyeDataset(cfg['paths']['val_csv'], cfg, transform=tfm_val, is_train=False)
-
-    bs = int(cfg['training']['batch_size'])
-    nw = int(cfg['training']['num_workers'])
+    bs = int(cfg['training']['batch_size']); nw = int(cfg['training']['num_workers'])
     train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True, num_workers=nw, pin_memory=True)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, num_workers=nw, pin_memory=True)
     return train_loader, val_loader
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -84,75 +81,43 @@ def main():
     parser.add_argument("--outdir", type=str, default=None)
     args = parser.parse_args()
 
-    cfg = get_config(args)
+    cfg = load_config(args.config)
     dbg_enabled = bool(cfg.get("debug", {}).get("enabled", False))
     seed_everything(cfg['seed'], dbg_enabled)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     train_loader, val_loader = build_dataloaders(cfg)
-    
-    if cfg["model"]["backbone"] == "unet_encoder_unfreezed":
-        print(f"[INFO] (Train) Loading Unet encoder backbone (unfreezed).")
-        backbone = UNetBackbone()
-        backbone = backbone.to(device)  # ensure module is on device
-        model = EyeLandmarkUNetModel(
-            hidden_landmarks=int(cfg['model']['hidden_landmarks']),
-            dropout=float(cfg['model']['dropout']),
-            num_landmarks=int(cfg['data']['num_landmarks']),
-            use_aux_head=False,
-            backbone=backbone,
-        ).to(device)
 
-
-    elif cfg["model"]["backbone"] == "unet_encoder_freezed":
-        pretrain_path = cfg.get('model', {}).get('pretrain_encoder_ckpt', None)
-        if pretrain_path is None:
-            raise ValueError("pretrain_encoder_ckpt must be specified in config for unet_encoder_freezed backbone")
-        print(f"[INFO] (Train) Loading pre-trained UNet encoder from: {pretrain_path}")
-        backbone = load_unet_encoder_backbone_from_ckpt(
-            pretrain_path,
-            cfg=cfg,
-            device=device
-        )
-        backbone = backbone.to(device)  # ensure module is on device
-
-        model = EyeLandmarkUNetModel(
-            hidden_landmarks=int(cfg['model']['hidden_landmarks']),
-            dropout=float(cfg['model']['dropout']),
-            num_landmarks=int(cfg['data']['num_landmarks']),
-            use_aux_head=False,
-            backbone=backbone,
-        ).to(device)
-
-    elif cfg['model']['backbone'] == 'resnet18':
-        print("[INFO] Using ResNet18 backbone for EyeLandmarkModel.")
-        model = EyeLandmarkModel(
-            backbone_name=cfg['model']['backbone'],
-            pretrained=False,
-            hidden_landmarks=cfg['model']['hidden_landmarks'],
-            dropout=cfg['model']['dropout'],
-            num_landmarks=cfg['data']['num_landmarks']
-        ).to(device)
-
-
+    # Load pretrained encoder weights (frozen)
+    pretrain_path = cfg.get('model', {}).get('pretrain_encoder_ckpt', None)
+    if pretrain_path:
+        print(f"[INFO] Loading multi-scale UNet encoder from: {pretrain_path}")
+        backbone = load_multiscale_unet_encoder_from_ckpt(pretrain_path, device=device)
     else:
-        raise ValueError(f"Unknown backbone: {cfg['model']['backbone']}")
+        print("[INFO] No pretrain provided; using randomly initialized frozen encoder.")
+        from landmarks_only_training.models.backbones.multiscale_unet_backbone import MultiScaleUNetBackbone
+        backbone = MultiScaleUNetBackbone().to(device)
+        backbone.freeze_backbone()
 
+    model = MultiScaleEyeLandmarkUNetModel(
+        hidden_landmarks=int(cfg['model']['hidden_landmarks']),
+        dropout=float(cfg['model']['dropout']),
+        num_landmarks=int(cfg['data']['num_landmarks']),
+        backbone=backbone,
+        use_final_conv=True,
+    ).to(device)
 
-        
     optimizer = optim.AdamW(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=float(cfg['training']['lr']),
         weight_decay=float(cfg['training']['weight_decay'])
     )
-
     outdir = args.outdir or cfg['paths']['output_dir']
     ensure_dir(outdir, dbg=dbg_enabled)
-
     criterion = build_landmark_loss(cfg)
 
-    ckpt_best = os.path.join(outdir, "best_unet_landmarks.pt")
-    ckpt_last = os.path.join(outdir, "checkpoint_last_unet_landmarks.pt")
+    ckpt_best = os.path.join(outdir, "best_multiscale_unet_landmarks.pt")
+    ckpt_last = os.path.join(outdir, "checkpoint_last_multiscale_unet_landmarks.pt")
     best_metric_value = float('inf')
     patience = int(cfg['training']['early_stop_patience'])
     epochs_no_improve = 0
@@ -161,8 +126,7 @@ def main():
     for epoch in range(epochs):
         model.train()
         train_bar = tqdm(train_loader, desc=f"Epoch {epoch} [Train]")
-        running_loss = 0.0
-        steps = 0
+        running_loss = 0.0; steps = 0
         for batch in train_bar:
             img  = batch['image'].to(device)
             vis  = batch['visibility'].to(device)
@@ -176,12 +140,8 @@ def main():
             pred = out['landmarks']
             lmk_loss, _ = criterion(pred, lmk, mask, vis)
 
-            optimizer.zero_grad()
-            lmk_loss.backward()
-            optimizer.step()
-
-            running_loss += lmk_loss.item()
-            steps += 1
+            optimizer.zero_grad(); lmk_loss.backward(); optimizer.step()
+            running_loss += lmk_loss.item(); steps += 1
             train_bar.set_postfix({"loss": f"{lmk_loss.item():.4f}"})
 
         avg_train_loss = running_loss / max(1, steps)
@@ -217,7 +177,7 @@ def main():
         val_lmk_l1 = abs_diff.sum().item() / max(valid_coords_val, 1e-6)
 
         lmk_m = landmark_metrics(pred_cat, gt_cat, mask_cat)
-        pck_m = pck_metric(pred_cat, gt_cat, mask_cat, threshold=cfg['model']['pck_threshold'])
+        pck_m = pck_metric(pred_cat, gt_cat, mask_cat, threshold=cfg['inference']['pck_threshold'])
 
         print(f"[Epoch {epoch}] train_loss={avg_train_loss:.5f} "
               f"val_L1={val_lmk_l1:.5f} NME={lmk_m['nme']:.4f} "
@@ -235,11 +195,11 @@ def main():
                 "best_metric_name": "val_lmk_l1"
             }, ckpt_best, dbg=dbg_enabled)
             epochs_no_improve = 0
-            print(f"[INFO] val_L1 improved: {previous_best:.5f} -> {best_metric_value:.5f}. Best model updated at: {ckpt_best}")
+            print(f"[INFO] val_L1 improved: {previous_best:.5f} -> {best_metric_value:.5f}. Saved: {ckpt_best}")
         else:
             epochs_no_improve += 1
-            print(f"[INFO] val_L1 did not improve (current {val_lmk_l1:.5f} >= best {previous_best:.5f}). "
-                  f"Early stopping counter: {epochs_no_improve}/{patience}")
+            print(f"[INFO] val_L1 not improved ({val_lmk_l1:.5f} >= {previous_best:.5f}). "
+                  f"Early stop: {epochs_no_improve}/{patience}")
 
         save_checkpoint({
             "epoch": epoch,
@@ -250,9 +210,8 @@ def main():
         }, ckpt_last, dbg=dbg_enabled)
 
         if epochs_no_improve >= patience:
-            print(f"[INFO] Early stopping triggered after {patience} epochs without improvement.")
+            print(f"[INFO] Early stopping after {patience} epochs without improvement.")
             break
-
 
 if __name__ == "__main__":
     main()
